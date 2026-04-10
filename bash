@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# ask - send a prompt to an LLM API
 
 if [ -z "$ASK_API_URL" ] || [ -z "$ASK_MODEL" ] || [ -z "$ASK_API_KEY" ]; then
   echo "Error: ASK_API_URL, ASK_MODEL, and ASK_API_KEY must be set" >&2
@@ -25,7 +25,7 @@ else
   exit 1
 fi
 
-curl "$ASK_API_URL" -s \
+response=$(curl "$ASK_API_URL" -s \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $ASK_API_KEY" \
   -d "{
@@ -34,4 +34,17 @@ curl "$ASK_API_URL" -s \
       {\"role\": \"system\", \"content\": \"You are a CLI tool. Output plain text only. No yapping. Keep the output concise.\"},
       {\"role\": \"user\", \"content\": $(echo "$prompt" | jq -Rs '.')}
     ]
-  }" | jq -r '.choices[0].message.content'
+  }")
+
+if [ $? -ne 0 ]; then
+  echo "Error: failed to reach API at $ASK_API_URL" >&2
+  exit 1
+fi
+
+
+if echo "$response" | jq -e '.error' > /dev/null 2>&1; then
+  echo "API Error: $(echo "$response" | jq -r '.error.message')" >&2
+  exit 1
+fi
+
+echo "$response" | jq -r '.choices[0].message.content'
