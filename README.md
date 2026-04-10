@@ -1,11 +1,11 @@
 # ask
 
-Small Bash CLI tool for sending prompts to an OpenAI-compatible LLM API.
+A minimal Bash CLI tool for sending prompts to an OpenAI-compatible LLM API.
 
-## Requirements
+## Dependencies
 
-- curl
-- jq
+- `curl`
+- `jq`
 
 ## Setup
 
@@ -14,39 +14,42 @@ Set these environment variables:
 ```bash
 export ASK_API_URL="https://api.groq.com/openai/v1/chat/completions"
 export ASK_MODEL="llama-3.3-70b-versatile"
-export ASK_API_KEY="your-api-key"
+export ASK_API_KEY="your-api-key-here"
 ```
 
 ## Usage
-
-Ask a question:
 
 ```bash
 ask "What is the capital of France?"
 ```
 
-Use piped input:
+Arguments are combined into one prompt:
 
 ```bash
-cat script.sh | ask "Explain this script simply:"
+ask "Establishment dates of" "Turkey" "Azerbaijan" "Japan"
 ```
 
-Use both arguments and input:
+Piped input is also supported:
 
 ```bash
-./ask "Explain this output:" "$(uname -a)"
+cat script.sh | ask "Explain this Bash script:"
 ```
 
-## Install
+## Installation
 
 ```bash
-chmod +x ask
-cp ask /usr/local/bin/ask
+git clone https://github.com/yourusername/ask.git
+chmod +x ask/ask
+cp ask/ask /usr/local/bin/ask
 ```
 
-## Limitations
+## Known Limitations
 
-- No chat history
-- No streaming
-- Long prompts may hit API/model limits
-- Requires `curl` and `jq`
+- Stateless; no conversation history
+- Long prompts may exceed model limits
+- No streaming output
+- Requires `jq`
+
+## License
+
+MIT — see `LICENSE`
