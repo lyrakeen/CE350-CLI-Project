@@ -17,6 +17,12 @@ export ASK_MODEL="llama-3.3-70b-versatile"
 export ASK_API_KEY="your-api-key-here"
 ```
 
+The script expects these exact variable names:
+
+- `ASK_API_URL`
+- `ASK_MODEL`
+- `ASK_API_KEY`
+
 ## Usage
 
 ```bash
@@ -35,12 +41,19 @@ Piped input is also supported:
 cat script.sh | ask "Explain this Bash script:"
 ```
 
+Arguments and piped input can be used together:
+
+```bash
+echo "uname -a output here" | ask "Explain this output briefly:"
+```
+
 ## Installation
 
 ```bash
 git clone https://github.com/yourusername/ask.git
-chmod +x ask/ask
-cp ask/ask /usr/local/bin/ask
+cd ask
+chmod +x ask
+cp ask /usr/local/bin/ask
 ```
 
 ## Known Limitations
@@ -49,6 +62,8 @@ cp ask/ask /usr/local/bin/ask
 - Long prompts may exceed model limits
 - No streaming output
 - Requires `jq`
+- Requires valid environment variables
+- Requires network access to the API provider
 
 ## License
 
