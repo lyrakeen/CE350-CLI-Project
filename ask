@@ -30,6 +30,7 @@ response=$(curl "$ASK_API_URL" -s \
   -H "Authorization: Bearer $ASK_API_KEY" \
   -d "{
     \"model\": \"$ASK_MODEL\",
+    \"max_tokens\": 1024,
     \"messages\": [
       {\"role\": \"system\", \"content\": \"You are a CLI tool. Output plain text only. No yapping. Keep the output concise.\"},
       {\"role\": \"user\", \"content\": $(echo "$prompt" | jq -Rs '.')}
@@ -40,7 +41,6 @@ if [ $? -ne 0 ]; then
   echo "Error: failed to reach API at $ASK_API_URL" >&2
   exit 1
 fi
-
 
 if echo "$response" | jq -e '.error' > /dev/null 2>&1; then
   echo "API Error: $(echo "$response" | jq -r '.error.message')" >&2

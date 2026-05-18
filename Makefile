@@ -3,7 +3,7 @@ CODE := codebase.txt
 
 .PHONY: all clean check-env
 
-all: action.plan.md
+all: check-env action.plan.md
 
 check-env:
 	@test -n "$(ASK_API_URL)" || (echo "Error: ASK_API_URL is not set" >&2; exit 1)
