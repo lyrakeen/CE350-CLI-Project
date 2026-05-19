@@ -1,11 +1,10 @@
-
 ## Project Structure
 
 .
 ├── ask
 ├── codebase.txt
 ├── Makefile
-├── .env.example
+├── .env
 ├── .gitignore
 ├── README.md
 ├── COMMIT_PLAN.md
@@ -31,38 +30,63 @@ ASK_API_KEY
 
 First, make the ask script executable:
 
+```bash
 chmod +x ask
+```
 
-Then copy the example environment file:
+Create a `.env` file in the project root directory.
 
-cp .env.example .env
+The `.env` file must contain the required API configuration values:
 
-Edit .env and add your real API values.
+```bash
+export ASK_API_URL="your_api_url_here"
+export ASK_MODEL="your_model_here"
+export ASK_API_KEY="your_api_key_here"
+```
 
-After editing the file, load the environment variables:
+After creating the `.env` file, load the environment variables:
 
+```bash
 source .env
+```
+
+To verify that the variables are loaded, run:
+
+```bash
+echo $ASK_API_URL
+echo $ASK_MODEL
+echo $ASK_API_KEY
+```
+
+The `.env` file is used only for local configuration and should not be committed to GitHub.
 
 ## Run the Pipeline
 
 Run the pipeline with GNU Make:
 
+```bash
 make -j
+```
 
-The -j option allows Make to run independent targets in parallel.
+The `-j` option allows Make to run independent targets in parallel.
 
 The final output will be:
 
+```text
 action.plan.md
+```
 
 ## Clean Generated Files
 
 To remove all generated markdown files, run:
 
+```bash
 make clean
+```
 
 ## Pipeline Flow
 
+```text
 codebase.txt
 ├── quality.md   ── quality.sum.md
 ├── perf.md      ── perf.sum.md
@@ -73,16 +97,17 @@ concatenated.md
 refined.md
         ↓
 action.plan.md
+```
 
 ## How the Pipeline Works
 
-The pipeline starts with codebase.txt.
+The pipeline starts with `codebase.txt`.
 
 In the first phase, Make runs three independent analysis targets:
 
-- quality.md
-- perf.md
-- security.md
+- `quality.md`
+- `perf.md`
+- `security.md`
 
 These targets analyze the codebase from three different perspectives:
 
@@ -90,28 +115,31 @@ These targets analyze the codebase from three different perspectives:
 2. Performance
 3. Security
 
-Because these files all depend only on codebase.txt and ask, they can run in parallel when the command make -j is used.
+Because these files all depend only on `codebase.txt` and `ask`, they can run in parallel when the command `make -j` is used.
 
 In the second phase, each analysis result is summarized:
 
-- quality.md becomes quality.sum.md
-- perf.md becomes perf.sum.md
-- security.md becomes security.sum.md
+- `quality.md` becomes `quality.sum.md`
+- `perf.md` becomes `perf.sum.md`
+- `security.md` becomes `security.sum.md`
 
 Each summary contains exactly five actionable bullet points.
 
-In the third phase, the summaries are combined into concatenated.md.
+In the third phase, the summaries are combined into `concatenated.md`.
 
-This step is done only with shell tools such as echo and cat. It does not use ask, as required by the assignment.
+This step is done only with shell tools such as `echo` and `cat`. It does not use `ask`, as required by the assignment.
 
-Then, concatenated.md is refined into refined.md.
+Then, `concatenated.md` is refined into `refined.md`.
 
-Finally, refined.md is used to generate the final engineering action plan:
+Finally, `refined.md` is used to generate the final engineering action plan:
 
+```text
 action.plan.md
+```
 
 ## Makefile
 
+```make
 ASK := ./ask
 CODE := codebase.txt
 
@@ -165,11 +193,12 @@ action.plan.md: refined.md $(ASK)
 
 clean:
 	rm -f quality.md quality.sum.md perf.md perf.sum.md security.md security.sum.md concatenated.md refined.md action.plan.md
+```
 
 ## Notes
 
-- make -j enables parallel execution.
-- quality.md, perf.md, and security.md are created in parallel.
-- concatenated.md is created without using the LLM.
-- refined.md removes duplicate and low-value issues.
-- action.plan.md is the final prioritized engineering action plan.
+- `make -j` enables parallel execution.
+- `quality.md`, `perf.md`, and `security.md` are created in parallel.
+- `concatenated.md` is created without using the LLM.
+- `refined.md` removes duplicate and low-value issues.
+- `action.plan.md` is the final prioritized engineering action plan.
